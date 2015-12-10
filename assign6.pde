@@ -45,7 +45,7 @@ boolean isMovingRight;
 
 
 int time;
-int wait = 4000;
+int wait = 5500;
 
 
 
