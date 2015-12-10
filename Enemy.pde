@@ -1,110 +1,82 @@
-class Enemy{
+class Fighter{
+  PImage fighterImg;
   int x = 0;
   int y = 0;
   int type;
   int speed = 5;
-
-  PImage enemyImg;
-  Enemy(int x, int y, int type) {
-    this.x = x;
-    this.y = y;
-    this.type = type;
-    enemyImg = loadImage("img/enemy.png");
-    
-  }
-  void move() {
-    this.x+= 5;  
-  }
-
-  void draw()
-  {
-    image(enemyImg, x, y);
-  }
- 
-  boolean isCollideWithFighter()
-  {
-    if(isHit(fighter.x,fighter.y,50,50,this.x,this.y,60,60))//int ax, int ay, int aw, int ah, int bx, int by, int bw, int bh
-      return true;
-    return false;
-  }
-
-  boolean isOutOfBorder()
-  {
-    if(x>640)
-      return true;
-    return false;
-  }
+  int shoots=0;  
 
 
-}
+  int hp;
+  Fighter(int hp) {
+    this.fighterImg = loadImage("img/fighter.png");
+    this.x = width - this.fighterImg.width;
+    this.y = (height-this.fighterImg.height)/2;
+    this.type = FlightType.FIGHTER;
+    this.hp = hp;
+  }
 
-void addEnemy(int type)
-{  
-  for (int i = 0; i < enemyCount; ++i) {
-    enemys[i] = null;
-  }
-  switch (type) {
-    case EnemysShowingType.STRAIGHT:
-      addStraightEnemy();
-      break;
-    case EnemysShowingType.SLOPE:
-      addSlopeEnemy();
-      break;
-    case EnemysShowingType.DIAMOND:
-      addDiamondEnemy();
-      break;
-    case EnemysShowingType.STRONGLINE:
-      addEnemyStrong();
-      break;
-  }
-  time = millis();
-}
+  void draw() {
+    image(fighterImg, this.x, this.y);
 
-void addStraightEnemy()
-{
-  float t = random(height - 60);
-  int h = int(t);
-  for (int i = 0; i < 5; ++i) {
-    enemys[i] = new Enemy( (i+1)*-80, h , FlightType.ENEMY);
-  }
-}
-void addSlopeEnemy()
-{
-  float t = random(height - 60 * 5);
-  int h = int(t);
-  for (int i = 0; i < 5; ++i) {
-    enemys[i] = new Enemy((i+1)*-80, h + i * 50 , FlightType.ENEMY);
-  }
-}
-void addDiamondEnemy()
-{
-  float t = random( 60 * 3 ,height - 60 * 3);
-  int h = int(t);
-  int x_axis = 1;
-  for (int i = 0; i < 8; ++i) {
-    if (i == 0 || i == 7) {
-      enemys[i] = new Enemy((x_axis+1)*-80, h, FlightType.ENEMY);
-      x_axis++;
+    if (isMovingUp) {
+      this.move(Direction.UP);
     }
-    else if (i == 1 || i == 5){
-      enemys[i] = new Enemy((x_axis+1)*-80, h + 1 * 40, FlightType.ENEMY);
-      enemys[i+1] = new Enemy((x_axis+1)*-80, h - 1 * 40, FlightType.ENEMY);
-      i++;
-      x_axis++;
-      
+    if (isMovingDown) {
+      this.move(Direction.DOWN);  
     }
-    else {
-      enemys[i] = new Enemy((x_axis+1)*-80, h + 2 * 40, FlightType.ENEMY);
-      enemys[i+1] = new Enemy((x_axis+1)*-80, h - 2 * 40, FlightType.ENEMY);
-      i++;
-      x_axis++;
+    if (isMovingLeft) {
+      this.move(Direction.LEFT);
+    }
+    if (isMovingRight) {
+      this.move(Direction.RIGHT);  
     }
   }
-}
-void addEnemyStrong()
-{
-  for (int i = 0; i < 25; ++i) {
-    enemys[i] = new Boss(0, 40+ i%5 * 85, FlightType.ENEMYSTRONG);
-    
+
+  void shoot() {
+    if(bullet[shoots%5].y==-1)
+    {
+      bullet[shoots%5]=new Bullet(x,y);
+      shoots++;
+    }
+  }
+
+  void move(int direct) {
+    switch (direct) {
+      case Direction.UP:
+        if (this.y - speed > 0) {
+          this.y-= speed;
+        }
+        break;
+      case Direction.DOWN:
+        if (this.y + speed < height - this.fighterImg.height) {
+          this.y+= speed;
+        }
+        break;
+      case Direction.LEFT:
+        if (this.x - speed > 0) {
+          this.x-= speed;
+        }
+        break;
+      case Direction.RIGHT:
+        if (this.x + speed < width - this.fighterImg.width) {
+          this.x+= speed;
+        }
+        break;
+    }
+  }
+
+  void hpValueChange(int value)
+  {
+    this.hp += value;
+    if (this.hp <=0) {
+      state = GameState.END;
+      return;
+    }
+    else if (this.hp >= 100) {
+      this.hp = 100;
+      return;
+    }
+    return;
   }
 }
