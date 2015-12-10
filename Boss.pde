@@ -4,6 +4,6 @@ class Boss extends Enemy{
     enemyImg = loadImage("img/enemy2.png");
   }
   void move() {
-    this.x+= 3;  
+    this.x+= 2;  
   }
 }
