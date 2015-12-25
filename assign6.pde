@@ -113,9 +113,19 @@ void draw()
           if(bullet[j].y!=-1)
             if(enemys[i]!=null&&isHit(enemys[i].x,enemys[i].y,60,60,bullet[j].x,bullet[j].y,30,25))
             {
-              bullet[j].y=-1;
-              flameMgr.addFlame(enemys[i].x, enemys[i].y);
-              enemys[i]=null;
+              if(currentType != EnemysShowingType.STRAIGHT)
+              { 
+                bullet[j].y=-1;
+                flameMgr.addFlame(enemys[i].x, enemys[i].y);
+                enemys[i]=null;
+              }
+              else
+              { 
+                bullet[j].y=-1;
+                if(i>=20)
+                flameMgr.addFlame(enemys[i].x, enemys[i].y);
+                enemys[i]=null;
+              }
             }
         }
       }
@@ -169,6 +179,11 @@ void keyReleased(){
     flameMgr = new FlameMgr();
     treasure = new Treasure();
     fighter = new Fighter(20);
+    currentType = EnemysShowingType.STRAIGHT;
+    for(int i=0;i<5;i++)
+    {
+      bullet[i]=new Bullet(-1,-1);
+    } 
       default : break ;
     }
   }
